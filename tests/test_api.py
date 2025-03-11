@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.main import app
-from app.taskdao import TaskDAO
+from app.task_dao import TaskDAO
 from db.models import Base, Status
 from db.session import get_db
 

@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.session import get_db
 
 from .shemas import TaskCreate, TaskResponse, UpdateStatus
-from .taskdao import TaskDAO
+from .task_dao import TaskDAO
 
 task_router = APIRouter()
 
