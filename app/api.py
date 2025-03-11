@@ -1,26 +1,31 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db
-
+from db.models import Status
 from .shemas import TaskCreate, TaskResponse, UpdateStatus
 from .task_dao import TaskDAO
 
 task_router = APIRouter()
 
 
-@task_router.post("/create")
-async def create_task(task: TaskCreate, response: Response, db: AsyncSession=Depends(get_db)):
+@task_router.post("/create", status_code=status.HTTP_201_CREATED)
+async def create_task(task: TaskCreate, db: AsyncSession=Depends(get_db)):
 
     await TaskDAO(db=db).create_task(**task.model_dump())
 
-    response.status_code = status.HTTP_201_CREATED
-
 
 @task_router.get("/", response_model=list[TaskResponse])
-async def get_all_tasks(db: AsyncSession=Depends(get_db)):
-    
-    tasks = await TaskDAO(db=db).get_all_task_from_db()
+async def get_all_tasks(
+    status: Optional[Status] = Query(None, description="Фильтр по статусу задачи"),
+    page: int=Query(1, ge=1, description="Номер страницы."),
+    size: int=Query(10, ge=1, le=20, description="Количество записей на странице"),
+    db: AsyncSession = Depends(get_db)
+    ):
+    tasks = await TaskDAO(db=db).get_all_tasks_from_db(
+        status=status, page=page, size=size)
     return tasks
 
 

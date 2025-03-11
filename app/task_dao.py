@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,7 +25,16 @@ class TaskDAO():
             return task
 
 
-    async def get_all_task_from_db(self):
-        result = await self.db.execute(select(Task))
-        
+    async def get_all_tasks_from_db(self, 
+                                   status: Optional[Status] = None,
+                                   page: int = 1,
+                                   size: int = 10):
+        query = select(Task)
+
+        if status:
+            query = query.where(Task.status == status)
+
+        query = query.offset((page - 1) * size).limit(size)
+
+        result = await self.db.execute(query)
         return result.scalars().all()
