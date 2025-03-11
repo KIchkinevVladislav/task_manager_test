@@ -1,10 +1,11 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.session import get_db
 from db.models import Status
+from db.session import get_db
+
 from .shemas import TaskCreate, TaskResponse, UpdateStatus
 from .task_dao import TaskDAO
 
